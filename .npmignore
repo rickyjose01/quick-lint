@@ -1,0 +1,17 @@
+# Source files (dist/ is published instead)
+src/
+tsconfig.json
+
+# Development files
+*.tgz
+.husky/
+.github/
+.vscode/
+
+# Tests
+test/
+__tests__/
+*.test.*
+
+# Node modules (should never be published)
+node_modules/
