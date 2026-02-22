@@ -12,6 +12,12 @@
     "clean:pack": "npm run clean && npm run build && npm pack",
     "prepublishOnly": "npm run build"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "keywords": [
     "eslint",
     "prettier",
