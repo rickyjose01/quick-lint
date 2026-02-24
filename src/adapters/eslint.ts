@@ -4,6 +4,7 @@
 import { ESLint, Linter } from 'eslint';
 import type { QuickLintConfig, LintResult, FileResult } from '../types/index.js';
 import { logger } from '../utils/logger.js';
+import { getStagedFiles } from '../utils/git.js';
 
 
 
@@ -74,6 +75,36 @@ export async function buildEslintConfig(config: QuickLintConfig): Promise<Linter
                 'react-hooks/exhaustive-deps': 'warn',
             },
         });
+
+        // JSX Accessibility — catches missing alt, invalid aria roles, etc.
+        try {
+            const jsxA11yPlugin = await import('eslint-plugin-jsx-a11y');
+            flatConfig.push({
+                plugins: {
+                    'jsx-a11y': jsxA11yPlugin.default,
+                },
+                rules: {
+                    'jsx-a11y/alt-text': 'error',
+                    'jsx-a11y/anchor-has-content': 'warn',
+                    'jsx-a11y/anchor-is-valid': 'warn',
+                    'jsx-a11y/aria-props': 'error',
+                    'jsx-a11y/aria-role': 'error',
+                    'jsx-a11y/aria-unsupported-elements': 'error',
+                    'jsx-a11y/click-events-have-key-events': 'warn',
+                    'jsx-a11y/heading-has-content': 'warn',
+                    'jsx-a11y/html-has-lang': 'warn',
+                    'jsx-a11y/img-redundant-alt': 'warn',
+                    'jsx-a11y/no-access-key': 'warn',
+                    'jsx-a11y/no-autofocus': 'warn',
+                    'jsx-a11y/no-distracting-elements': 'error',
+                    'jsx-a11y/role-has-required-aria-props': 'error',
+                    'jsx-a11y/role-supports-aria-props': 'error',
+                    'jsx-a11y/tabindex-no-positive': 'warn',
+                },
+            });
+        } catch {
+            // jsx-a11y not installed — skip accessibility rules
+        }
     }
 
     // SonarJS rules (always included when sonarqube is enabled)
@@ -195,20 +226,4 @@ export async function runEslint(
     };
 }
 
-/**
- * Get staged JS/TS files from git.
- */
-async function getStagedFiles(): Promise<string[]> {
-    const { execSync } = await import('node:child_process');
-    try {
-        const output = execSync('git diff --cached --name-only --diff-filter=ACMR', {
-            encoding: 'utf8',
-        });
-        return output
-            .trim()
-            .split('\n')
-            .filter((f) => /\.(js|jsx|ts|tsx|mjs|cjs)$/.test(f));
-    } catch {
-        return [];
-    }
-}
+
