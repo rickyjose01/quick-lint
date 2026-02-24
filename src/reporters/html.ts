@@ -100,7 +100,7 @@ export async function writeHtmlReport(
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quick-Lint | SonarQube Analysis Report</title>
+  <title>quicklint | SonarQube Analysis Report</title>
   <style>
     :root {
       --bg: #0f0f23;
@@ -263,7 +263,7 @@ export async function writeHtmlReport(
 <body>
   <div class="container">
     <div class="header">
-      <h1>⚡ Quick-Lint Analysis Report</h1>
+      <h1>⚡ quicklint Analysis Report</h1>
       <div class="project-name">${escapeHtml(report.projectName)}</div>
       <div class="timestamp">Generated on ${new Date(report.timestamp).toLocaleString()}</div>
     </div>

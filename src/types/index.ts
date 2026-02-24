@@ -1,5 +1,5 @@
 /**
- * Quick-Lint — Shared type definitions
+ * quicklint — Shared type definitions
  */
 
 import type { Linter } from 'eslint';

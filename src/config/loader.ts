@@ -26,7 +26,7 @@ const explorer = cosmiconfig(MODULE_NAME, {
 let cachedConfig: QuickLintConfig | null = null;
 
 /**
- * Load the quick-lint config by searching for config files
+ * Load the quicklint config by searching for config files
  * and merging with defaults
  */
 export async function loadConfig(cwd?: string): Promise<QuickLintConfig> {

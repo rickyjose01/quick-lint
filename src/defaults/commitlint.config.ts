@@ -1,6 +1,6 @@
 /**
- * Default Commitlint configuration for Quick-Lint
- * This is exported as 'quick-lint/commitlint-config'
+ * Default Commitlint configuration for quicklint
+ * This is exported as 'quicklint/commitlint-config'
  */
 import { defaultConfig } from '../config/defaults.js';
 

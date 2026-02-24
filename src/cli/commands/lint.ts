@@ -134,14 +134,14 @@ export async function lintCommand(options: {
 
     if (result.fixableCount > 0 && !options.fix) {
         logger.info(
-            `${result.fixableCount} issues are auto-fixable. Run ${chalk.bold('quick-lint lint --fix')} to fix them.`
+            `${result.fixableCount} issues are auto-fixable. Run ${chalk.bold('quicklint lint --fix')} to fix them.`
         );
         logger.blank();
     }
 
     if (sonarFiles.length > 0) {
         logger.info(
-            `Run ${chalk.bold('quick-lint report')} to generate a detailed SonarQube HTML report.`
+            `Run ${chalk.bold('quicklint report')} to generate a detailed SonarQube HTML report.`
         );
         logger.blank();
     }

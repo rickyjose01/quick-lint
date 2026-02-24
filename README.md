@@ -1,10 +1,10 @@
-# ⚡ Quick-Lint
+# ⚡ quicklint
 
 **Unified code quality orchestrator for React** — ESLint, Prettier, Husky, Commitlint & SonarQube analysis in one package with zero configuration.
 
 ---
 
-## Why Quick-Lint?
+## Why quicklint?
 
 Managing code quality across React projects is painful:
 
@@ -13,11 +13,11 @@ Managing code quality across React projects is painful:
 - **Version mismatches** across projects
 - **SonarQube** requires a cloud server or VS Code plugin
 
-Quick-Lint solves all of this with **one install, one config file, zero overhead**.
+quicklint solves all of this with **one install, one config file, zero overhead**.
 
 ```bash
-npm install quick-lint --save-dev
-npx quick-lint init
+npm install quicklint --save-dev
+npx quicklint init
 ```
 
 That's it. Your project now has:
@@ -35,22 +35,22 @@ That's it. Your project now has:
 
 ```bash
 # Install
-npm install quick-lint --save-dev
+npm install quicklint --save-dev
 
 # Initialize (creates config, installs deps, sets up hooks & IDE)
-npx quick-lint init
+npx quicklint init
 
 # Run all quality checks
-npx quick-lint check
+npx quicklint check
 
 # Lint only
-npx quick-lint lint
+npx quicklint lint
 
 # Format code
-npx quick-lint format
+npx quicklint format
 
 # Generate SonarQube report
-npx quick-lint report
+npx quicklint report
 ```
 
 ---
@@ -59,27 +59,27 @@ npx quick-lint report
 
 | Command | Description |
 |---------|-------------|
-| `quick-lint init` | Scaffold config file, install deps, set up hooks & IDE |
-| `quick-lint lint` | Run ESLint + SonarJS analysis |
-| `quick-lint lint --fix` | Auto-fix lint issues |
-| `quick-lint lint --staged` | Only lint staged files (for pre-commit hooks) |
-| `quick-lint format` | Format all files with Prettier |
-| `quick-lint format --check` | Check formatting without writing |
-| `quick-lint check` | Run all quality checks (lint + format + SonarQube) |
-| `quick-lint report` | Generate SonarQube-style HTML report |
-| `quick-lint report -f json` | Generate JSON report |
-| `quick-lint report -f both` | Generate both HTML and JSON |
-| `quick-lint commitlint --edit <file>` | Validate commit message (used by hooks) |
-| `quick-lint eject` | Remove all config files and uninstall the package |
+| `quicklint init` | Scaffold config file, install deps, set up hooks & IDE |
+| `quicklint lint` | Run ESLint + SonarJS analysis |
+| `quicklint lint --fix` | Auto-fix lint issues |
+| `quicklint lint --staged` | Only lint staged files (for pre-commit hooks) |
+| `quicklint format` | Format all files with Prettier |
+| `quicklint format --check` | Check formatting without writing |
+| `quicklint check` | Run all quality checks (lint + format + SonarQube) |
+| `quicklint report` | Generate SonarQube-style HTML report |
+| `quicklint report -f json` | Generate JSON report |
+| `quicklint report -f both` | Generate both HTML and JSON |
+| `quicklint commitlint --edit <file>` | Validate commit message (used by hooks) |
+| `quicklint eject` | Remove all config files and uninstall the package |
 
 ---
 
 ## Configuration
 
-Quick-Lint works out of the box with **zero configuration**. If you need to customize, edit `quicklint.config.js`:
+quicklint works out of the box with **zero configuration**. If you need to customize, edit `quicklint.config.js`:
 
 ```js
-/** @type {import('quick-lint').QuickLintConfig} */
+/** @type {import('quicklint').QuickLintConfig} */
 export default {
   eslint: {
     enabled: true,
@@ -120,8 +120,8 @@ export default {
   husky: {
     enabled: true,
     hooks: {
-      'pre-commit': 'npx quick-lint lint --staged',
-      'commit-msg': 'npx quick-lint commitlint --edit "$1"',
+      'pre-commit': 'npx quicklint lint --staged',
+      'commit-msg': 'npx quicklint commitlint --edit "$1"',
     },
   },
 
@@ -137,18 +137,18 @@ Only specify what you want to override — everything else uses production-ready
 
 ## How IDE Integration Works
 
-When you run `quick-lint init`, it generates thin proxy config files and configures your editor:
+When you run `quicklint init`, it generates thin proxy config files and configures your editor:
 
 | Generated File | Purpose |
 |----------------|---------|
-| `eslint.config.mjs` | Re-exports ESLint + SonarJS config from quick-lint |
+| `eslint.config.mjs` | Re-exports ESLint + SonarJS config from quicklint |
 | `.vscode/settings.json` | Enables format-on-save, ESLint flat config |
 | `.vscode/extensions.json` | Recommends ESLint + Prettier extensions |
 
-The `eslint.config.mjs` proxy is intentionally short — a few lines that import from `quick-lint`:
+The `eslint.config.mjs` proxy is intentionally short — a few lines that import from `quicklint`:
 
 ```js
-import { loadConfig, buildEslintConfig } from 'quick-lint';
+import { loadConfig, buildEslintConfig } from 'quicklint';
 const config = await loadConfig();
 export default await buildEslintConfig(config);
 ```
@@ -161,11 +161,11 @@ This gives your IDE **real-time ESLint + SonarJS feedback** and **Prettier forma
 
 ## SonarQube Analysis
 
-Quick-Lint includes `eslint-plugin-sonarjs` (200+ rules by SonarSource) and runs analysis locally — no server needed.
+quicklint includes `eslint-plugin-sonarjs` (200+ rules by SonarSource) and runs analysis locally — no server needed.
 
 ```bash
 # Run analysis and generate HTML report
-npx quick-lint report
+npx quicklint report
 
 # The report is saved to ./reports/sonarqube-report.html
 ```
@@ -179,27 +179,27 @@ The report categorizes issues as:
 
 ## Ejecting
 
-If you want to remove quick-lint from your project:
+If you want to remove quicklint from your project:
 
 ```bash
 # Preview what will be removed
-npx quick-lint eject --dry-run
+npx quicklint eject --dry-run
 
 # Remove all config files and uninstall
-npx quick-lint eject
+npx quicklint eject
 
 # Remove config files but keep peer dependencies installed
-npx quick-lint eject --keep-deps
+npx quicklint eject --keep-deps
 ```
 
-This removes all generated config files (`quicklint.config.js`, `eslint.config.mjs`, `.husky/`) and uninstalls `quick-lint` along with its peer dependencies.
+This removes all generated config files (`quicklint.config.js`, `eslint.config.mjs`, `.husky/`) and uninstalls `quicklint` along with its peer dependencies.
 
 ---
 
 ## Programmatic API
 
 ```js
-import { loadConfig, runEslint, checkFormatting, runSonarAnalysis } from 'quick-lint';
+import { loadConfig, runEslint, checkFormatting, runSonarAnalysis } from 'quicklint';
 
 const config = await loadConfig();
 
@@ -229,7 +229,7 @@ const sonarResult = await runSonarAnalysis(config);
 | eslint-plugin-jsx-a11y | ^6.0 | JSX accessibility rules |
 | typescript-eslint | ^8.24 | TypeScript support |
 
-All versions are managed together. Minor upgrades happen automatically. Major upgrades of individual tools are released as major versions of quick-lint.
+All versions are managed together. Minor upgrades happen automatically. Major upgrades of individual tools are released as major versions of quicklint.
 
 ---
 

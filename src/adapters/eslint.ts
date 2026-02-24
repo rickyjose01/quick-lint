@@ -9,7 +9,7 @@ import { getStagedFiles } from '../utils/git.js';
 
 
 /**
- * Build the ESLint flat config array from quick-lint config.
+ * Build the ESLint flat config array from quicklint config.
  * Returns flat config objects that can be passed to ESLint({ overrideConfig }).
  */
 export async function buildEslintConfig(config: QuickLintConfig): Promise<Linter.Config[]> {

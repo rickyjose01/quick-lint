@@ -1,5 +1,5 @@
 /**
- * Quick-Lint CLI — main entry point
+ * quicklint CLI — main entry point
  */
 import { Command } from 'commander';
 import chalk from 'chalk';
@@ -16,9 +16,9 @@ import { logger } from '../utils/logger.js';
 const program = new Command();
 
 program
-    .name('quick-lint')
+    .name('quicklint')
     .description(
-        chalk.hex('#7c3aed')('⚡ Quick-Lint') +
+        chalk.hex('#7c3aed')('⚡ Quicklint') +
         ' — Unified code quality orchestrator for React'
     )
     .version('1.0.0');
@@ -27,7 +27,7 @@ program
 
 program
     .command('init')
-    .description('Initialize quick-lint in your project')
+    .description('Initialize quicklint in your project')
     .action(async () => {
         try {
             await initCommand();
@@ -148,7 +148,7 @@ program
 
 program
     .command('eject')
-    .description('Remove all quick-lint config files and uninstall the package')
+    .description('Remove all quicklint config files and uninstall the package')
     .option('--dry-run', 'Preview changes without making them')
     .option('--keep-deps', 'Keep peer dependencies installed')
     .action(async (options: { dryRun?: boolean; keepDeps?: boolean }) => {

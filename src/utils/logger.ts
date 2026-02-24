@@ -1,9 +1,9 @@
 /**
- * Colored logging utility for Quick-Lint
+ * Colored logging utility for quicklint
  */
 import chalk from 'chalk';
 
-const PREFIX = chalk.bold.hex('#7c3aed')('⚡ quick-lint');
+const PREFIX = chalk.bold.hex('#7c3aed')('⚡ quicklint');
 
 export const logger = {
     info(message: string): void {

@@ -1,6 +1,6 @@
 /**
- * Default Prettier configuration for Quick-Lint
- * This is exported as 'quick-lint/prettier-config'
+ * Default Prettier configuration for quicklint
+ * This is exported as 'quicklint/prettier-config'
  */
 import { defaultConfig } from '../config/defaults.js';
 
