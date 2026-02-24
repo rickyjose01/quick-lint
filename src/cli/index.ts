@@ -8,6 +8,7 @@ import { lintCommand } from './commands/lint.js';
 import { formatCommand } from './commands/format.js';
 import { checkCommand } from './commands/check.js';
 import { reportCommand } from './commands/report.js';
+import { ejectCommand } from './commands/eject.js';
 import { loadConfig } from '../config/loader.js';
 import { lintCommitMessageFromFile } from '../adapters/commitlint.js';
 import { logger } from '../utils/logger.js';
@@ -137,6 +138,22 @@ program
                 }
                 logger.success('Commit message is valid ✔');
             }
+        } catch (error) {
+            logger.error(error instanceof Error ? error.message : String(error));
+            process.exitCode = 1;
+        }
+    });
+
+// ─── eject ─────────────────────────────────────────────────
+
+program
+    .command('eject')
+    .description('Remove all quick-lint config files and uninstall the package')
+    .option('--dry-run', 'Preview changes without making them')
+    .option('--keep-deps', 'Keep peer dependencies installed')
+    .action(async (options: { dryRun?: boolean; keepDeps?: boolean }) => {
+        try {
+            await ejectCommand(options);
         } catch (error) {
             logger.error(error instanceof Error ? error.message : String(error));
             process.exitCode = 1;

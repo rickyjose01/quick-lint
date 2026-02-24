@@ -78,6 +78,32 @@ async function installMissingPeers(): Promise<void> {
   }
 }
 
+/**
+ * Ensure `quick-lint` itself is installed in the project's node_modules.
+ * This is required for the eslint.config.mjs proxy to resolve imports.
+ */
+async function ensureQuickLintInstalled(): Promise<void> {
+  const cwd = process.cwd();
+  try {
+    await fs.access(path.join(cwd, 'node_modules', 'quick-lint'));
+    return; // Already installed
+  } catch {
+    // Not installed — install it
+  }
+
+  logger.info('Installing quick-lint as a dev dependency...');
+  try {
+    execSync('npm install --save-dev quick-lint', {
+      cwd,
+      stdio: 'inherit',
+    });
+    logger.success('Installed quick-lint');
+  } catch {
+    logger.warn('Could not install quick-lint automatically.');
+    logger.info('Try manually: npm install --save-dev quick-lint');
+  }
+}
+
 export async function initCommand(): Promise<void> {
   logger.header('Initializing Quick-Lint');
   logger.blank();
@@ -106,7 +132,12 @@ export async function initCommand(): Promise<void> {
     });
   }
 
-  // 2. Install missing peer dependencies
+  // 2. Ensure quick-lint itself is installed (required for IDE proxy)
+  await withSpinner('Ensuring quick-lint is installed', async () => {
+    await ensureQuickLintInstalled();
+  });
+
+  // 3. Install missing peer dependencies
   await withSpinner('Checking and installing dependencies', async () => {
     await installMissingPeers();
   });
@@ -153,7 +184,7 @@ function getInlineTemplate(): string {
 // Docs: https://github.com/user/quick-lint#configuration
 
 /** @type {import('quick-lint').QuickLintConfig} */
-module.exports = {
+export default {
   eslint: {
     enabled: true,
     react: true,
