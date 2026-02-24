@@ -32,7 +32,7 @@ export async function setupHusky(config: QuickLintConfig): Promise<void> {
 
     if (!(await isGitRepo())) {
         logger.warn('Not a git repository — skipping Husky setup');
-        logger.info('Run "git init" first, then "quick-lint init" again');
+        logger.info('Run "git init" first, then "quicklint init" again');
         return;
     }
 

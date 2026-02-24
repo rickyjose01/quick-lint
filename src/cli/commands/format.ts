@@ -30,7 +30,7 @@ export async function formatCommand(options: {
                 logger.info(`  ... and ${result.unformattedFiles.length - 20} more`);
             }
             logger.blank();
-            logger.info('Run `quick-lint format` to fix them.');
+            logger.info('Run `quicklint format` to fix them.');
             process.exitCode = 1;
         }
     } else {

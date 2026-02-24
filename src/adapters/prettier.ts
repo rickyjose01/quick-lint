@@ -21,7 +21,7 @@ async function loadPrettier(): Promise<typeof import('prettier')> {
 }
 
 /**
- * Extract Prettier-specific options from the quick-lint config.
+ * Extract Prettier-specific options from the quicklint config.
  * Strips the `enabled` flag so the result can be passed directly to Prettier.
  */
 export function buildPrettierConfig(

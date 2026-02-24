@@ -6,7 +6,7 @@
   "types": "./dist/index.d.ts",
   "type": "module",
   "bin": {
-    "quick-lint": "./bin/quick-lint.js"
+    "quicklint": "./bin/quicklint.js"
   },
   "exports": {
     ".": {
@@ -34,7 +34,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "node --import tsx --test test/**/*.test.ts",
-    "lint": "node ./bin/quick-lint.js lint",
+    "lint": "node ./bin/quicklint.js lint",
     "clean": "rimraf dist && npm cache clean --force",
     "clean:pack": "npm run clean && npm run build && npm pack",
     "prepublishOnly": "npm run build"

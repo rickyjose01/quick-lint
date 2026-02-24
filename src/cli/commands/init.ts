@@ -1,5 +1,5 @@
 /**
- * `init` command — scaffolds quick-lint in a project
+ * `init` command — scaffolds quicklint in a project
  */
 import { promises as fs, readFileSync } from 'node:fs';
 import * as path from 'node:path';
@@ -21,7 +21,7 @@ function getTemplatesDir(): string {
 }
 
 /**
- * Read quick-lint's own peerDependencies from its package.json.
+ * Read quicklint's own peerDependencies from its package.json.
  */
 function getQuickLintPeerDeps(): Record<string, string> {
   try {
@@ -79,33 +79,33 @@ async function installMissingPeers(): Promise<void> {
 }
 
 /**
- * Ensure `quick-lint` itself is installed in the project's node_modules.
+ * Ensure `quicklint` itself is installed in the project's node_modules.
  * This is required for the eslint.config.mjs proxy to resolve imports.
  */
 async function ensureQuickLintInstalled(): Promise<void> {
   const cwd = process.cwd();
   try {
-    await fs.access(path.join(cwd, 'node_modules', 'quick-lint'));
+    await fs.access(path.join(cwd, 'node_modules', 'quicklint'));
     return; // Already installed
   } catch {
     // Not installed — install it
   }
 
-  logger.info('Installing quick-lint as a dev dependency...');
+  logger.info('Installing quicklint as a dev dependency...');
   try {
-    execSync('npm install --save-dev quick-lint', {
+    execSync('npm install --save-dev quicklint', {
       cwd,
       stdio: 'inherit',
     });
-    logger.success('Installed quick-lint');
+    logger.success('Installed quicklint');
   } catch {
-    logger.warn('Could not install quick-lint automatically.');
-    logger.info('Try manually: npm install --save-dev quick-lint');
+    logger.warn('Could not install quicklint automatically.');
+    logger.info('Try manually: npm install --save-dev quicklint');
   }
 }
 
 export async function initCommand(): Promise<void> {
-  logger.header('Initializing Quick-Lint');
+  logger.header('Initializing quicklint');
   logger.blank();
 
   const cwd = process.cwd();
@@ -132,8 +132,8 @@ export async function initCommand(): Promise<void> {
     });
   }
 
-  // 2. Ensure quick-lint itself is installed (required for IDE proxy)
-  await withSpinner('Ensuring quick-lint is installed', async () => {
+  // 2. Ensure quicklint itself is installed (required for IDE proxy)
+  await withSpinner('Ensuring quicklint is installed', async () => {
     await ensureQuickLintInstalled();
   });
 
@@ -157,15 +157,15 @@ export async function initCommand(): Promise<void> {
 
   // 6. Print success message
   logger.blank();
-  logger.header('Quick-Lint is ready! 🚀');
+  logger.header('quicklint is ready! 🚀');
   logger.blank();
 
   logger.info('Available commands:');
   logger.table([
-    ['quick-lint lint', 'Run ESLint + SonarJS analysis'],
-    ['quick-lint format', 'Format code with Prettier'],
-    ['quick-lint check', 'Run all quality checks'],
-    ['quick-lint report', 'Generate SonarQube-style report'],
+    ['quicklint lint', 'Run ESLint + SonarJS analysis'],
+    ['quicklint format', 'Format code with Prettier'],
+    ['quicklint check', 'Run all quality checks'],
+    ['quicklint report', 'Generate SonarQube-style report'],
   ]);
   logger.blank();
 
@@ -180,10 +180,10 @@ export async function initCommand(): Promise<void> {
 }
 
 function getInlineTemplate(): string {
-  return `// Quick-Lint Configuration
-// Docs: https://github.com/user/quick-lint#configuration
+  return `// quicklint Configuration
+// Docs: https://github.com/user/quicklint#configuration
 
-/** @type {import('quick-lint').QuickLintConfig} */
+/** @type {import('quicklint').QuickLintConfig} */
 export default {
   eslint: {
     enabled: true,
@@ -219,8 +219,8 @@ export default {
   husky: {
     enabled: true,
     hooks: {
-      'pre-commit': 'npx quick-lint lint --staged',
-      'commit-msg': 'npx quick-lint commitlint --edit "$1"',
+      'pre-commit': 'npx quicklint lint --staged',
+      'commit-msg': 'npx quicklint commitlint --edit "$1"',
     },
   },
 
