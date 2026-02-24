@@ -5,6 +5,7 @@ import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 import type { QuickLintConfig, PrettierResult } from '../types/index.js';
 import { logger } from '../utils/logger.js';
+import { getStagedFiles } from '../utils/git.js';
 
 /**
  * Dynamically import prettier. Throws a helpful error if not installed.
@@ -227,17 +228,4 @@ export async function formatFiles(
     };
 }
 
-/**
- * Get staged files from git.
- */
-async function getStagedFiles(): Promise<string[]> {
-    const { execSync } = await import('node:child_process');
-    try {
-        const output = execSync('git diff --cached --name-only --diff-filter=ACMR', {
-            encoding: 'utf8',
-        });
-        return output.trim().split('\n').filter(Boolean);
-    } catch {
-        return [];
-    }
-}
+

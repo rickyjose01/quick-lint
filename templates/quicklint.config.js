@@ -2,7 +2,7 @@
 // Docs: https://github.com/user/quick-lint#configuration
 
 /** @type {import('quick-lint').QuickLintConfig} */
-module.exports = {
+export default {
     // ESLint configuration
     eslint: {
         enabled: true,
