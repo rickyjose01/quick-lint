@@ -10,7 +10,7 @@ import { logger } from '../utils/logger.js';
  */
 export function printCheckResult(result: CheckResult): void {
     logger.blank();
-    logger.header('Quick-Lint Quality Report');
+    logger.header('quicklint Quality Report');
     logger.blank();
 
     if (result.eslint) {
@@ -94,7 +94,7 @@ function printPrettierResult(result: PrettierResult): void {
         if (result.unformattedFiles.length > 10) {
             console.log(chalk.dim(`    ... and ${result.unformattedFiles.length - 10} more`));
         }
-        console.log(chalk.dim(`    Run ${chalk.bold('quick-lint format')} to fix formatting.`));
+        console.log(chalk.dim(`    Run ${chalk.bold('quicklint format')} to fix formatting.`));
     }
 
     logger.blank();

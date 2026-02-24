@@ -1,7 +1,7 @@
-// Quick-Lint Configuration
-// Docs: https://github.com/user/quick-lint#configuration
+// quicklint Configuration
+// Docs: https://github.com/user/quicklint#configuration
 
-/** @type {import('quick-lint').QuickLintConfig} */
+/** @type {import('quicklint').QuickLintConfig} */
 export default {
     // ESLint configuration
     eslint: {
@@ -55,8 +55,8 @@ export default {
     husky: {
         enabled: true,
         hooks: {
-            'pre-commit': 'npx quick-lint lint --staged',
-            'commit-msg': 'npx quick-lint commitlint --edit "$1"',
+            'pre-commit': 'npx quicklint lint --staged',
+            'commit-msg': 'npx quicklint commitlint --edit "$1"',
         },
     },
 

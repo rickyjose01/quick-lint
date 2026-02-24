@@ -1,8 +1,8 @@
 /**
- * Quick-Lint — Public API
+ * quicklint — Public API
  *
- * This module exports the programmatic API for quick-lint,
- * allowing other packages and IDE integrations to use quick-lint functionality.
+ * This module exports the programmatic API for quicklint,
+ * allowing other packages and IDE integrations to use quicklint functionality.
  */
 
 // Config

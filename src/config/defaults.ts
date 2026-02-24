@@ -1,5 +1,5 @@
 /**
- * Production-ready default configuration for Quick-Lint
+ * Production-ready default configuration for quicklint
  *
  * These defaults are opinionated, curated rules suitable for
  * React + TypeScript projects. Users can override any rule via
@@ -103,8 +103,8 @@ export const defaultConfig: QuickLintConfig = {
     husky: {
         enabled: true,
         hooks: {
-            'pre-commit': 'npx quick-lint lint --staged',
-            'commit-msg': 'npx quick-lint commitlint --edit "$1"',
+            'pre-commit': 'npx quicklint lint --staged',
+            'commit-msg': 'npx quicklint commitlint --edit "$1"',
         },
     },
 

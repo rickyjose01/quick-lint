@@ -1,5 +1,5 @@
 /**
- * `eject` command — removes all quick-lint generated config files
+ * `eject` command — removes all quicklint generated config files
  * and uninstalls the package from the host project.
  */
 import { promises as fs, readFileSync } from 'node:fs';
@@ -26,14 +26,14 @@ const CONFIG_FILES = [
 ];
 
 /**
- * Read quick-lint's own peerDependencies from its package.json.
+ * Read quicklint's own peerDependencies from its package.json.
  */
 function getQuickLintPeerDeps(): string[] {
     try {
         const pkgPath = path.resolve(
             process.cwd(),
             'node_modules',
-            'quick-lint',
+            'quicklint',
             'package.json',
         );
         const raw = JSON.parse(readFileSync(pkgPath, 'utf8'));
@@ -66,10 +66,10 @@ async function removeConfigFiles(cwd: string, dryRun: boolean): Promise<string[]
 }
 
 /**
- * Uninstall quick-lint and its peer dependencies.
+ * Uninstall quicklint and its peer dependencies.
  */
 function uninstallPackages(keepDeps: boolean, dryRun: boolean): string[] {
-    const packages = ['quick-lint'];
+    const packages = ['quicklint'];
 
     if (!keepDeps) {
         const peers = getQuickLintPeerDeps();
@@ -101,7 +101,7 @@ export async function ejectCommand(options: {
     if (dryRun) {
         logger.header('Eject Preview (dry run — no changes will be made)');
     } else {
-        logger.header('Ejecting Quick-Lint');
+        logger.header('Ejecting quicklint');
     }
     logger.blank();
 
@@ -152,7 +152,7 @@ export async function ejectCommand(options: {
     // 4. Uninstall packages
     logger.blank();
     if (dryRun) {
-        const packages = ['quick-lint'];
+        const packages = ['quicklint'];
         if (!options.keepDeps) packages.push(...getQuickLintPeerDeps());
         logger.info(chalk.bold('Would uninstall:'));
         for (const pkg of packages) {
@@ -169,12 +169,12 @@ export async function ejectCommand(options: {
     if (dryRun) {
         logger.header('Dry run complete — no changes were made');
         logger.blank();
-        logger.info(`Run ${chalk.bold('npx quick-lint eject')} to perform the actual eject.`);
+        logger.info(`Run ${chalk.bold('npx quicklint eject')} to perform the actual eject.`);
     } else {
-        logger.header('Quick-Lint has been ejected! 👋');
+        logger.header('quicklint has been ejected! 👋');
         logger.blank();
-        logger.info('All quick-lint config files and dependencies have been removed.');
-        logger.info('Your project is now free of quick-lint configuration.');
+        logger.info('All quicklint config files and dependencies have been removed.');
+        logger.info('Your project is now free of quicklint configuration.');
     }
     logger.blank();
 }
