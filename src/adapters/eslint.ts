@@ -25,7 +25,7 @@ export async function buildEslintConfig(config: QuickLintConfig): Promise<Linter
     const globalVars = globalsModule.default;
 
     // TypeScript support via typescript-eslint
-    if (config.eslint.typescript) {
+    if (config.eslint.enabled && config.eslint.typescript) {
         const tseslint = await import('typescript-eslint');
         const recommended = tseslint.default.configs.recommended;
         if (Array.isArray(recommended)) {
@@ -34,7 +34,7 @@ export async function buildEslintConfig(config: QuickLintConfig): Promise<Linter
     }
 
     // React & React Hooks plugins
-    if (config.eslint.react) {
+    if (config.eslint.enabled && config.eslint.react) {
         const reactPlugin = await import('eslint-plugin-react');
         const reactHooksPlugin = await import('eslint-plugin-react-hooks');
 
@@ -114,7 +114,7 @@ export async function buildEslintConfig(config: QuickLintConfig): Promise<Linter
     }
 
     // User rule overrides (applied last so they take precedence)
-    if (Object.keys(config.eslint.rules).length > 0) {
+    if (config.eslint.enabled && Object.keys(config.eslint.rules).length > 0) {
         flatConfig.push({
             rules: config.eslint.rules,
         });
@@ -136,7 +136,7 @@ export async function runEslint(
 ): Promise<LintResult> {
     const startTime = Date.now();
 
-    if (!config.eslint.enabled) {
+    if (!config.eslint.enabled && !config.sonarqube.enabled) {
         return {
             tool: 'eslint',
             success: true,

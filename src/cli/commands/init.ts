@@ -174,6 +174,8 @@ export async function initCommand(): Promise<void> {
   logger.info('  • Install the recommended VS Code extensions when prompted');
   logger.info('  • Prettier format-on-save is configured in .vscode/settings.json');
   logger.blank();
+  logger.info(chalk.yellow('  ⚠️  Please RELOAD your IDE window for ESLint to pick up the new packages.'));
+  logger.blank();
 
   logger.info('Customize by editing quicklint.config.js');
   logger.blank();
