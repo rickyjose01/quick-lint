@@ -1,7 +1,7 @@
 // quicklint Configuration
 // Docs: https://github.com/user/quicklint#configuration
 
-/** @type {import('quicklint').QuickLintConfig} */
+/** @type {import('quicklint-react').QuickLintConfig} */
 export default {
     // ESLint configuration
     eslint: {

@@ -85,7 +85,7 @@ async function installMissingPeers(): Promise<void> {
 async function ensureQuickLintInstalled(): Promise<void> {
   const cwd = process.cwd();
   try {
-    await fs.access(path.join(cwd, 'node_modules', 'quicklint'));
+    await fs.access(path.join(cwd, 'node_modules', 'quicklint-react'));
     return; // Already installed
   } catch {
     // Not installed — install it
@@ -93,14 +93,14 @@ async function ensureQuickLintInstalled(): Promise<void> {
 
   logger.info('Installing quicklint as a dev dependency...');
   try {
-    execSync('npm install --save-dev quicklint', {
+    execSync('npm install --save-dev quicklint-react', {
       cwd,
       stdio: 'inherit',
     });
     logger.success('Installed quicklint');
   } catch {
-    logger.warn('Could not install quicklint automatically.');
-    logger.info('Try manually: npm install --save-dev quicklint');
+    logger.warn('Could not install quicklint-react automatically.');
+    logger.info('Try manually: npm install --save-dev quicklint-react');
   }
 }
 
@@ -183,7 +183,7 @@ function getInlineTemplate(): string {
   return `// quicklint Configuration
 // Docs: https://github.com/user/quicklint#configuration
 
-/** @type {import('quicklint').QuickLintConfig} */
+/** @type {import('quicklint-react').QuickLintConfig} */
 export default {
   eslint: {
     enabled: true,
