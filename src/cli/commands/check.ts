@@ -55,7 +55,7 @@ export async function checkCommand(): Promise<void> {
     };
 
     // 1. ESLint (includes SonarJS rules when sonarqube is enabled)
-    if (config.eslint.enabled) {
+    if (config.eslint.enabled || config.sonarqube.enabled) {
         const spinner = createSpinner('Running ESLint + SonarQube analysis...');
         spinner.start();
         try {

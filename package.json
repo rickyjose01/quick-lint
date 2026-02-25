@@ -1,6 +1,6 @@
 {
   "name": "quicklint-react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unified code quality orchestrator for React — ESLint, Prettier, Husky, Commitlint & SonarQube analysis in one package with zero configuration.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
