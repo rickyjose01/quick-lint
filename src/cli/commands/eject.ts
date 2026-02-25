@@ -33,7 +33,7 @@ function getQuickLintPeerDeps(): string[] {
         const pkgPath = path.resolve(
             process.cwd(),
             'node_modules',
-            'quicklint',
+            'quicklint-react',
             'package.json',
         );
         const raw = JSON.parse(readFileSync(pkgPath, 'utf8'));
@@ -69,7 +69,7 @@ async function removeConfigFiles(cwd: string, dryRun: boolean): Promise<string[]
  * Uninstall quicklint and its peer dependencies.
  */
 function uninstallPackages(keepDeps: boolean, dryRun: boolean): string[] {
-    const packages = ['quicklint'];
+    const packages = ['quicklint-react'];
 
     if (!keepDeps) {
         const peers = getQuickLintPeerDeps();
@@ -152,7 +152,7 @@ export async function ejectCommand(options: {
     // 4. Uninstall packages
     logger.blank();
     if (dryRun) {
-        const packages = ['quicklint'];
+        const packages = ['quicklint-react'];
         if (!options.keepDeps) packages.push(...getQuickLintPeerDeps());
         logger.info(chalk.bold('Would uninstall:'));
         for (const pkg of packages) {
