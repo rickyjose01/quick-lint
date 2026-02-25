@@ -21,6 +21,7 @@ npx quicklint init
 ```
 
 That's it. Your project now has:
+
 - ✅ ESLint with React + TypeScript + SonarJS rules
 - ✅ JSX accessibility checks (alt text, ARIA roles, etc.)
 - ✅ Prettier with opinionated defaults + format-on-save
@@ -57,20 +58,20 @@ npx quicklint report
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `quicklint init` | Scaffold config file, install deps, set up hooks & IDE |
-| `quicklint lint` | Run ESLint + SonarJS analysis |
-| `quicklint lint --fix` | Auto-fix lint issues |
-| `quicklint lint --staged` | Only lint staged files (for pre-commit hooks) |
-| `quicklint format` | Format all files with Prettier |
-| `quicklint format --check` | Check formatting without writing |
-| `quicklint check` | Run all quality checks (lint + format + SonarQube) |
-| `quicklint report` | Generate SonarQube-style HTML report |
-| `quicklint report -f json` | Generate JSON report |
-| `quicklint report -f both` | Generate both HTML and JSON |
-| `quicklint commitlint --edit <file>` | Validate commit message (used by hooks) |
-| `quicklint eject` | Remove all config files and uninstall the package |
+| Command                              | Description                                            |
+| ------------------------------------ | ------------------------------------------------------ |
+| `quicklint init`                     | Scaffold config file, install deps, set up hooks & IDE |
+| `quicklint lint`                     | Run ESLint + SonarJS analysis                          |
+| `quicklint lint --fix`               | Auto-fix lint issues                                   |
+| `quicklint lint --staged`            | Only lint staged files (for pre-commit hooks)          |
+| `quicklint format`                   | Format all files with Prettier                         |
+| `quicklint format --check`           | Check formatting without writing                       |
+| `quicklint check`                    | Run all quality checks (lint + format + SonarQube)     |
+| `quicklint report`                   | Generate SonarQube-style HTML report                   |
+| `quicklint report -f json`           | Generate JSON report                                   |
+| `quicklint report -f both`           | Generate both HTML and JSON                            |
+| `quicklint commitlint --edit <file>` | Validate commit message (used by hooks)                |
+| `quicklint eject`                    | Remove all config files and uninstall the package      |
 
 ---
 
@@ -86,15 +87,15 @@ export default {
     react: true,
     typescript: true,
     rules: {
-      'no-console': 'warn',
+      "no-console": "warn",
     },
-    ignorePatterns: ['node_modules', 'dist', 'build'],
+    ignorePatterns: ["node_modules", "dist", "build"],
   },
 
   prettier: {
     semi: true,
     singleQuote: true,
-    trailingComma: 'all',
+    trailingComma: "all",
     tabWidth: 2,
     printWidth: 100,
   },
@@ -112,16 +113,16 @@ export default {
       // Override SonarJS rules
     },
     report: {
-      format: 'html',      // 'html', 'json', or 'both'
-      outputDir: './reports',
+      format: "html", // 'html', 'json', or 'both'
+      outputDir: "./reports",
     },
   },
 
   husky: {
     enabled: true,
     hooks: {
-      'pre-commit': 'npx quicklint lint --staged',
-      'commit-msg': 'npx quicklint commitlint --edit "$1"',
+      "pre-commit": "npx quicklint lint --staged",
+      "commit-msg": 'npx quicklint commitlint --edit "$1"',
     },
   },
 
@@ -139,16 +140,16 @@ Only specify what you want to override — everything else uses production-ready
 
 When you run `quicklint init`, it generates thin proxy config files and configures your editor:
 
-| Generated File | Purpose |
-|----------------|---------|
-| `eslint.config.mjs` | Re-exports ESLint + SonarJS config from quicklint |
-| `.vscode/settings.json` | Enables format-on-save, ESLint flat config |
-| `.vscode/extensions.json` | Recommends ESLint + Prettier extensions |
+| Generated File            | Purpose                                           |
+| ------------------------- | ------------------------------------------------- |
+| `eslint.config.mjs`       | Re-exports ESLint + SonarJS config from quicklint |
+| `.vscode/settings.json`   | Enables format-on-save, ESLint flat config        |
+| `.vscode/extensions.json` | Recommends ESLint + Prettier extensions           |
 
 The `eslint.config.mjs` proxy is intentionally short — a few lines that import from `quicklint`:
 
 ```js
-import { loadConfig, buildEslintConfig } from 'quicklint-react';
+import { loadConfig, buildEslintConfig } from "quicklint-react";
 const config = await loadConfig();
 export default await buildEslintConfig(config);
 ```
@@ -156,6 +157,16 @@ export default await buildEslintConfig(config);
 This gives your IDE **real-time ESLint + SonarJS feedback** and **Prettier format-on-save** with no additional setup.
 
 > **Tip:** These files are safe to commit if you want consistent IDE behavior across the team.
+
+### Troubleshooting IDE Integration
+
+**1. ESLint is crashing or not working immediately after `init`**
+When you run `npx quicklint init`, it installs `quicklint-react` as a dev dependency. If your IDE was already open, the ESLint server might try to read the config before the installation finishes and crash.
+**Fix:** Reload your IDE window (VS Code: `Ctrl+Shift+P` → "Developer: Reload Window" or "ESLint: Restart ESLint Server").
+
+**2. I changed `quicklint.config.js` but the IDE behavior didn't update**
+The ESLint language server caches configurations heavily for performance. It does not auto-detect changes to our custom `quicklint.config.js` file.
+**Fix:** Restart the ESLint server (`Ctrl+Shift+P` → "ESLint: Restart ESLint Server") or reload your IDE window.
 
 ---
 
@@ -171,6 +182,7 @@ npx quicklint report
 ```
 
 The report categorizes issues as:
+
 - 🐛 **Bugs** — code that is demonstrably wrong
 - 🔒 **Vulnerabilities** — security-related issues
 - 🔧 **Code Smells** — maintainability issues
@@ -199,7 +211,12 @@ This removes all generated config files (`quicklint.config.js`, `eslint.config.m
 ## Programmatic API
 
 ```js
-import { loadConfig, runEslint, checkFormatting, runSonarAnalysis } from 'quicklint-react';
+import {
+  loadConfig,
+  runEslint,
+  checkFormatting,
+  runSonarAnalysis,
+} from "quicklint-react";
 
 const config = await loadConfig();
 
@@ -217,17 +234,17 @@ const sonarResult = await runSonarAnalysis(config);
 
 ## What's Included
 
-| Tool | Version | Purpose |
-|------|---------|---------|
-| ESLint | ^9.20 | JavaScript/TypeScript linting |
-| Prettier | ^3.5 | Code formatting |
-| Husky | ^9.1 | Git hooks |
-| Commitlint | ^19.6 | Commit message validation |
-| eslint-plugin-sonarjs | ^3.0 | SonarQube rules (200+) |
-| eslint-plugin-react | ^7.37 | React-specific rules |
-| eslint-plugin-react-hooks | ^5.1 | React hooks rules |
-| eslint-plugin-jsx-a11y | ^6.0 | JSX accessibility rules |
-| typescript-eslint | ^8.24 | TypeScript support |
+| Tool                      | Version | Purpose                       |
+| ------------------------- | ------- | ----------------------------- |
+| ESLint                    | ^9.20   | JavaScript/TypeScript linting |
+| Prettier                  | ^3.5    | Code formatting               |
+| Husky                     | ^9.1    | Git hooks                     |
+| Commitlint                | ^19.6   | Commit message validation     |
+| eslint-plugin-sonarjs     | ^3.0    | SonarQube rules (200+)        |
+| eslint-plugin-react       | ^7.37   | React-specific rules          |
+| eslint-plugin-react-hooks | ^5.1    | React hooks rules             |
+| eslint-plugin-jsx-a11y    | ^6.0    | JSX accessibility rules       |
+| typescript-eslint         | ^8.24   | TypeScript support            |
 
 All versions are managed together. Minor upgrades happen automatically. Major upgrades of individual tools are released as major versions of quicklint.
 
