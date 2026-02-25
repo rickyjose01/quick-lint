@@ -45,7 +45,7 @@ async function emitEslintConfig(cwd: string): Promise<void> {
         '// This file enables real-time ESLint + SonarJS linting in your IDE.',
         '// Modify your quicklint.config.js and restart ide to update.',
         '',
-        "import { loadConfig, buildEslintConfig } from 'quicklint';",
+        "import { loadConfig, buildEslintConfig } from 'quicklint-react';",
         '',
         'const config = await loadConfig();',
         'const eslintConfig = await buildEslintConfig(config);',

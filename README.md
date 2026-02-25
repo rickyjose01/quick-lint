@@ -16,7 +16,7 @@ Managing code quality across React projects is painful:
 quicklint solves all of this with **one install, one config file, zero overhead**.
 
 ```bash
-npm install quicklint --save-dev
+npm install quicklint-react --save-dev
 npx quicklint init
 ```
 
@@ -35,7 +35,7 @@ That's it. Your project now has:
 
 ```bash
 # Install
-npm install quicklint --save-dev
+npm install quicklint-react --save-dev
 
 # Initialize (creates config, installs deps, sets up hooks & IDE)
 npx quicklint init
@@ -79,7 +79,7 @@ npx quicklint report
 quicklint works out of the box with **zero configuration**. If you need to customize, edit `quicklint.config.js`:
 
 ```js
-/** @type {import('quicklint').QuickLintConfig} */
+/** @type {import('quicklint-react').QuickLintConfig} */
 export default {
   eslint: {
     enabled: true,
@@ -148,7 +148,7 @@ When you run `quicklint init`, it generates thin proxy config files and configur
 The `eslint.config.mjs` proxy is intentionally short — a few lines that import from `quicklint`:
 
 ```js
-import { loadConfig, buildEslintConfig } from 'quicklint';
+import { loadConfig, buildEslintConfig } from 'quicklint-react';
 const config = await loadConfig();
 export default await buildEslintConfig(config);
 ```
@@ -199,7 +199,7 @@ This removes all generated config files (`quicklint.config.js`, `eslint.config.m
 ## Programmatic API
 
 ```js
-import { loadConfig, runEslint, checkFormatting, runSonarAnalysis } from 'quicklint';
+import { loadConfig, runEslint, checkFormatting, runSonarAnalysis } from 'quicklint-react';
 
 const config = await loadConfig();
 
