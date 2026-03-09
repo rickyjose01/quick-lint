@@ -100,10 +100,19 @@ export const defaultConfig: QuickLintConfig = {
         },
     },
 
+    lintStaged: {
+        enabled: true,
+        concurrent: true,
+        config: {
+            '*.{js,jsx,ts,tsx}': ['eslint --fix', 'prettier --write'],
+            '*.{json,md,html,yml,yaml}': ['prettier --write'],
+        },
+    },
+
     husky: {
         enabled: true,
         hooks: {
-            'pre-commit': 'npx quicklint lint --staged',
+            'pre-commit': 'npx lint-staged',
             'commit-msg': 'npx quicklint commitlint --edit "$1"',
         },
     },

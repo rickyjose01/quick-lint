@@ -13,6 +13,7 @@ export interface QuickLintConfig {
     commitlint: CommitlintConfig;
     sonarqube: SonarqubeConfig;
     husky: HuskyConfig;
+    lintStaged: LintStagedConfig;
     ide: IdeConfig;
 }
 
@@ -51,6 +52,12 @@ export interface SonarqubeConfig {
 export interface HuskyConfig {
     enabled: boolean;
     hooks: Record<string, string>;
+}
+
+export interface LintStagedConfig {
+    enabled: boolean;
+    concurrent: boolean;
+    config: Record<string, string | string[]>;
 }
 
 export interface IdeConfig {
