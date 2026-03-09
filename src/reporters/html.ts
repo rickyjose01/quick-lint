@@ -7,48 +7,48 @@ import type { SonarReport, SonarFileReport, SonarIssue } from '../types/index.js
 import { logger } from '../utils/logger.js';
 
 function escapeHtml(text: string): string {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function severityBadge(severity: SonarIssue['severity']): string {
-    const colors: Record<string, string> = {
-        blocker: '#dc2626',
-        critical: '#ea580c',
-        major: '#d97706',
-        minor: '#2563eb',
-        info: '#6b7280',
-    };
-    const color = colors[severity] || '#6b7280';
-    return `<span class="badge" style="background:${color}">${severity.toUpperCase()}</span>`;
+  const colors: Record<string, string> = {
+    blocker: '#dc2626',
+    critical: '#ea580c',
+    major: '#d97706',
+    minor: '#2563eb',
+    info: '#6b7280',
+  };
+  const color = colors[severity] || '#6b7280';
+  return `<span class="badge" style="background:${color}">${severity.toUpperCase()}</span>`;
 }
 
 function typeBadge(type: SonarIssue['type']): string {
-    const icons: Record<string, string> = {
-        bug: '🐛',
-        vulnerability: '🔒',
-        code_smell: '🔧',
-    };
-    const labels: Record<string, string> = {
-        bug: 'Bug',
-        vulnerability: 'Vulnerability',
-        code_smell: 'Code Smell',
-    };
-    return `<span class="type-badge">${icons[type] || '📋'} ${labels[type] || type}</span>`;
+  const icons: Record<string, string> = {
+    bug: '🐛',
+    vulnerability: '🔒',
+    code_smell: '🔧',
+  };
+  const labels: Record<string, string> = {
+    bug: 'Bug',
+    vulnerability: 'Vulnerability',
+    code_smell: 'Code Smell',
+  };
+  return `<span class="type-badge">${icons[type] || '📋'} ${labels[type] || type}</span>`;
 }
 
 function generateFileSection(file: SonarFileReport): string {
-    const relPath = file.filePath
-        .replace(process.cwd() + '/', '')
-        .replace(process.cwd() + '\\', '')
-        .replace(/\\/g, '/');
+  const relPath = file.filePath
+    .replace(`${process.cwd()}/`, '')
+    .replace(`${process.cwd()}\\`, '')
+    .replace(/\\/g, '/');
 
-    const issueRows = file.issues
-        .map(
-            (issue) => `
+  const issueRows = file.issues
+    .map(
+      (issue) => `
         <tr>
           <td>${severityBadge(issue.severity)}</td>
           <td>${typeBadge(issue.type)}</td>
@@ -56,11 +56,11 @@ function generateFileSection(file: SonarFileReport): string {
           <td>${escapeHtml(issue.message)}</td>
           <td class="line-col">L${issue.line}:${issue.column}</td>
           <td class="effort">${issue.effort}</td>
-        </tr>`
-        )
-        .join('\n');
+        </tr>`,
+    )
+    .join('\n');
 
-    return `
+  return `
     <div class="file-section">
       <div class="file-header" onclick="this.parentElement.classList.toggle('collapsed')">
         <span class="file-path">📄 ${escapeHtml(relPath)}</span>
@@ -87,21 +87,20 @@ function generateFileSection(file: SonarFileReport): string {
 /**
  * Generate a self-contained HTML report
  */
-export async function writeHtmlReport(
-    report: SonarReport,
-    outputDir: string
-): Promise<string> {
-    await fs.mkdir(outputDir, { recursive: true });
+export async function writeHtmlReport(report: SonarReport, outputDir: string): Promise<string> {
+  await fs.mkdir(outputDir, { recursive: true });
 
-    const fileSections = report.files.map(generateFileSection).join('\n');
+  const fileSections = report.files.map(generateFileSection).join('\n');
 
-    const html = `<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>quicklint | SonarQube Analysis Report</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
     :root {
       --bg: #0f0f23;
       --surface: #1a1a2e;
@@ -256,8 +255,6 @@ export async function writeHtmlReport(
 
     .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
     .empty-state h2 { color: var(--success); margin-bottom: 0.5rem; }
-
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
   </style>
 </head>
 <body>
@@ -287,22 +284,23 @@ export async function writeHtmlReport(
       </div>
     </div>
 
-    ${report.files.length > 0
-            ? fileSections
-            : `
+    ${
+      report.files.length > 0
+        ? fileSections
+        : `
         <div class="empty-state">
           <div class="icon">🎉</div>
           <h2>No Issues Found</h2>
           <p>Your code is clean! Great job.</p>
         </div>`
-        }
+    }
   </div>
 </body>
 </html>`;
 
-    const filePath = path.join(outputDir, 'sonarqube-report.html');
-    await fs.writeFile(filePath, html, 'utf8');
+  const filePath = path.join(outputDir, 'sonarqube-report.html');
+  await fs.writeFile(filePath, html, 'utf8');
 
-    logger.success(`HTML report written to ${filePath}`);
-    return filePath;
+  logger.success(`HTML report written to ${filePath}`);
+  return filePath;
 }

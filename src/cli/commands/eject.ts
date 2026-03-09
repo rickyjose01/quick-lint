@@ -4,7 +4,7 @@
  */
 import { promises as fs, readFileSync } from 'node:fs';
 import * as path from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { removeHusky } from '../../adapters/husky.js';
 import { removeIdeConfigs } from '../../ide/config-emitter.js';
 import { logger } from '../../utils/logger.js';
@@ -15,166 +15,187 @@ import chalk from 'chalk';
  * All possible quicklint config file names (cosmiconfig search places).
  */
 const CONFIG_FILES = [
-    'quicklint.config.js',
-    'quicklint.config.cjs',
-    'quicklint.config.mjs',
-    'quicklint.config.json',
-    '.quicklintrc',
-    '.quicklintrc.json',
-    '.quicklintrc.js',
-    '.quicklintrc.cjs',
+  'quicklint.config.js',
+  'quicklint.config.cjs',
+  'quicklint.config.mjs',
+  'quicklint.config.json',
+  '.quicklintrc',
+  '.quicklintrc.json',
+  '.quicklintrc.js',
+  '.quicklintrc.cjs',
 ];
 
 /**
  * Read quicklint's own peerDependencies from its package.json.
  */
 function getQuickLintPeerDeps(): string[] {
-    try {
-        const pkgPath = path.resolve(
-            process.cwd(),
-            'node_modules',
-            'quicklint-react',
-            'package.json',
-        );
-        const raw = JSON.parse(readFileSync(pkgPath, 'utf8'));
-        return Object.keys(raw.peerDependencies ?? {});
-    } catch {
-        return [];
-    }
+  try {
+    const pkgPath = path.resolve(process.cwd(), 'node_modules', 'quicklint-react', 'package.json');
+    const raw = JSON.parse(readFileSync(pkgPath, 'utf8'));
+    return Object.keys(raw.peerDependencies ?? {});
+  } catch {
+    return [];
+  }
 }
 
 /**
  * Remove all quicklint config files from the project root.
  */
 async function removeConfigFiles(cwd: string, dryRun: boolean): Promise<string[]> {
-    const removed: string[] = [];
+  const removed: string[] = [];
 
-    for (const file of CONFIG_FILES) {
-        const filePath = path.join(cwd, file);
-        try {
-            await fs.access(filePath);
-            if (!dryRun) {
-                await fs.unlink(filePath);
-            }
-            removed.push(file);
-        } catch {
-            // File doesn't exist
-        }
+  for (const file of CONFIG_FILES) {
+    const filePath = path.join(cwd, file);
+    try {
+      await fs.access(filePath);
+      if (!dryRun) {
+        await fs.unlink(filePath);
+      }
+      removed.push(file);
+    } catch {
+      // File doesn't exist
     }
+  }
 
-    return removed;
+  return removed;
 }
 
 /**
  * Uninstall quicklint and its peer dependencies.
  */
 function uninstallPackages(keepDeps: boolean, dryRun: boolean): string[] {
-    const packages = ['quicklint-react'];
+  const packages = ['quicklint-react'];
 
-    if (!keepDeps) {
-        const peers = getQuickLintPeerDeps();
-        packages.push(...peers);
+  if (!keepDeps) {
+    const peers = getQuickLintPeerDeps();
+    packages.push(...peers);
+  }
+
+  if (!dryRun) {
+    try {
+      const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+      const result = spawnSync(npmCmd, ['uninstall', ...packages], {
+        cwd: process.cwd(),
+        stdio: 'inherit',
+        shell: process.platform === 'win32',
+      });
+      if (result.error || result.status !== 0) {
+        throw new Error('Uninstall failed');
+      }
+    } catch {
+      logger.warn('Some packages could not be uninstalled automatically.');
+      logger.info(`Try manually: npm uninstall ${packages.join(' ')}`);
     }
+  }
 
-    if (!dryRun) {
-        try {
-            execSync(`npm uninstall ${packages.join(' ')}`, {
-                cwd: process.cwd(),
-                stdio: 'inherit',
-            });
-        } catch {
-            logger.warn('Some packages could not be uninstalled automatically.');
-            logger.info(`Try manually: npm uninstall ${packages.join(' ')}`);
-        }
+  return packages;
+}
+
+async function removeIdeProxyConfigsDryRun(cwd: string): Promise<void> {
+  const ideFiles = ['eslint.config.mjs', '.prettierrc.mjs', '.prettierrc.json', 'commitlint.config.cjs'];
+  for (const file of ideFiles) {
+    try {
+      await fs.access(path.join(cwd, file));
+      logger.success(`Would remove ${file}`);
+    } catch {
+      // Doesn't exist
     }
+  }
+}
 
-    return packages;
+async function removeHuskyDryRun(cwd: string): Promise<void> {
+  try {
+    await fs.access(path.join(cwd, '.husky'));
+    logger.success('Would remove .husky/ directory');
+  } catch {
+    logger.info('No .husky/ directory found');
+  }
+}
+
+function printUninstallPreview(keepDeps: boolean): void {
+  const packages = ['quicklint-react'];
+  if (!keepDeps) {
+    packages.push(...getQuickLintPeerDeps());
+  }
+  logger.info(chalk.bold('Would uninstall:'));
+  for (const pkg of packages) {
+    logger.info(`  • ${pkg}`);
+  }
+}
+
+function printRemovedConfigs(removedConfigs: string[], dryRun: boolean): void {
+  if (removedConfigs.length > 0) {
+    for (const file of removedConfigs) {
+      logger.success(`${dryRun ? 'Would remove' : 'Removed'} ${file}`);
+    }
+  } else {
+    logger.info('No quicklint config files found');
+  }
+}
+
+function printEjectSummary(dryRun: boolean): void {
+  logger.blank();
+  if (dryRun) {
+    logger.header('Dry run complete — no changes were made');
+    logger.blank();
+    logger.info(`Run ${chalk.bold('npx quicklint eject')} to perform the actual eject.`);
+  } else {
+    logger.header('quicklint has been ejected! 👋');
+    logger.blank();
+    logger.info('All quicklint config files and dependencies have been removed.');
+    logger.info('Your project is now free of quicklint configuration.');
+  }
+  logger.blank();
 }
 
 export async function ejectCommand(options: {
-    keepDeps?: boolean;
-    dryRun?: boolean;
+  keepDeps?: boolean;
+  dryRun?: boolean;
 }): Promise<void> {
-    const cwd = process.cwd();
-    const dryRun = options.dryRun ?? false;
+  const cwd = process.cwd();
+  const dryRun = options.dryRun ?? false;
 
-    if (dryRun) {
-        logger.header('Eject Preview (dry run — no changes will be made)');
+  if (dryRun) {
+    logger.header('Eject Preview (dry run — no changes will be made)');
+  } else {
+    logger.header('Ejecting quicklint');
+  }
+  logger.blank();
+
+  // 1. Remove quicklint config files
+  const removedConfigs = await withSpinner('Removing quicklint config files', async () =>
+    removeConfigFiles(cwd, dryRun),
+  );
+  printRemovedConfigs(removedConfigs, dryRun);
+
+  // 2. Remove IDE proxy config files (eslint.config.mjs, .prettierrc.json, commitlint.config.cjs)
+  await withSpinner('Removing IDE proxy config files', async () => {
+    if (!dryRun) {
+      await removeIdeConfigs();
     } else {
-        logger.header('Ejecting quicklint');
+      await removeIdeProxyConfigsDryRun(cwd);
     }
-    logger.blank();
+  });
 
-    // 1. Remove quicklint config files
-    const removedConfigs = await withSpinner(
-        'Removing quicklint config files',
-        async () => removeConfigFiles(cwd, dryRun),
-    );
-    if (removedConfigs.length > 0) {
-        for (const file of removedConfigs) {
-            logger.success(`${dryRun ? 'Would remove' : 'Removed'} ${file}`);
-        }
+  // 3. Remove .husky directory
+  await withSpinner('Removing Husky git hooks', async () => {
+    if (!dryRun) {
+      await removeHusky();
     } else {
-        logger.info('No quicklint config files found');
+      await removeHuskyDryRun(cwd);
     }
+  });
 
-    // 2. Remove IDE proxy config files (eslint.config.mjs, .prettierrc.json, commitlint.config.cjs)
-    await withSpinner('Removing IDE proxy config files', async () => {
-        if (!dryRun) {
-            await removeIdeConfigs();
-        } else {
-            const ideFiles = ['eslint.config.mjs', '.prettierrc.json', 'commitlint.config.cjs'];
-            for (const file of ideFiles) {
-                try {
-                    await fs.access(path.join(cwd, file));
-                    logger.success(`Would remove ${file}`);
-                } catch {
-                    // Doesn't exist
-                }
-            }
-        }
+  // 4. Uninstall packages
+  logger.blank();
+  if (dryRun) {
+    printUninstallPreview(options.keepDeps ?? false);
+  } else {
+    await withSpinner('Uninstalling packages', async () => {
+      uninstallPackages(options.keepDeps ?? false, false);
     });
+  }
 
-    // 3. Remove .husky directory
-    await withSpinner('Removing Husky git hooks', async () => {
-        if (!dryRun) {
-            await removeHusky();
-        } else {
-            try {
-                await fs.access(path.join(cwd, '.husky'));
-                logger.success('Would remove .husky/ directory');
-            } catch {
-                logger.info('No .husky/ directory found');
-            }
-        }
-    });
-
-    // 4. Uninstall packages
-    logger.blank();
-    if (dryRun) {
-        const packages = ['quicklint-react'];
-        if (!options.keepDeps) packages.push(...getQuickLintPeerDeps());
-        logger.info(chalk.bold('Would uninstall:'));
-        for (const pkg of packages) {
-            logger.info(`  • ${pkg}`);
-        }
-    } else {
-        await withSpinner('Uninstalling packages', async () => {
-            uninstallPackages(options.keepDeps ?? false, false);
-        });
-    }
-
-    // 5. Print summary
-    logger.blank();
-    if (dryRun) {
-        logger.header('Dry run complete — no changes were made');
-        logger.blank();
-        logger.info(`Run ${chalk.bold('npx quicklint eject')} to perform the actual eject.`);
-    } else {
-        logger.header('quicklint has been ejected! 👋');
-        logger.blank();
-        logger.info('All quicklint config files and dependencies have been removed.');
-        logger.info('Your project is now free of quicklint configuration.');
-    }
-    logger.blank();
+  // 5. Print summary
+  printEjectSummary(dryRun);
 }

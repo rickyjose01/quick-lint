@@ -1,5 +1,8 @@
 // quicklint Configuration
 // Docs: https://github.com/user/quicklint#configuration
+// 
+// ⚠️ NOTE: If you change Prettier, Husky, or IDE Configs below, you MUST run
+// `npx quicklint init` again for the changes to synchronize with your project.
 
 /** @type {import('quicklint-react').QuickLintConfig} */
 export default {
@@ -55,7 +58,7 @@ export default {
     husky: {
         enabled: true,
         hooks: {
-            'pre-commit': 'npx quicklint lint --staged',
+            'pre-commit': 'npx lint-staged',
             'commit-msg': 'npx quicklint commitlint --edit "$1"',
         },
     },
