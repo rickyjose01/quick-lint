@@ -1,6 +1,6 @@
 {
   "name": "quicklint-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Unified code quality orchestrator for React — ESLint, Prettier, Husky, Commitlint & SonarQube analysis in one package with zero configuration.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -21,6 +21,9 @@
     },
     "./commitlint-config": {
       "import": "./dist/defaults/commitlint.config.js"
+    },
+    "./dist/adapters/prettier.js": {
+      "import": "./dist/adapters/prettier.js"
     }
   },
   "files": [
@@ -37,7 +40,8 @@
     "lint": "node ./bin/quicklint.js lint",
     "clean": "rimraf dist && npm cache clean --force",
     "clean:pack": "npm run clean && npm run build && npm pack",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "husky"
   },
   "keywords": [
     "eslint",
@@ -71,11 +75,12 @@
     "@typescript-eslint/eslint-plugin": ">=8.0.0",
     "@typescript-eslint/parser": ">=8.0.0",
     "eslint": ">=9.0.0",
+    "eslint-plugin-jsx-a11y": ">=6.0.0",
     "eslint-plugin-react": ">=7.0.0",
     "eslint-plugin-react-hooks": ">=5.0.0",
-    "eslint-plugin-jsx-a11y": ">=6.0.0",
     "eslint-plugin-sonarjs": ">=3.0.0",
     "husky": ">=9.0.0",
+    "lint-staged": ">=15.0.0",
     "prettier": ">=3.0.0",
     "typescript-eslint": ">=8.0.0"
   },
@@ -105,6 +110,9 @@
       "optional": true
     },
     "eslint-plugin-jsx-a11y": {
+      "optional": true
+    },
+    "lint-staged": {
       "optional": true
     }
   },
