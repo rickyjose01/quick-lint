@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import { loadConfig } from '../../config/loader.js';
 import { setupHusky } from '../../adapters/husky.js';
+import { setupLintStaged } from '../../adapters/lint-staged.js';
 import { emitIdeConfigs } from '../../ide/config-emitter.js';
 import { logger } from '../../utils/logger.js';
 import { withSpinner } from '../../utils/spinner.js';
@@ -39,7 +40,7 @@ function getQuickLintPeerDeps(): Record<string, string> {
 }
 
 /**
- * Check which peer dependencies are missing from the host project
+ * Check which peer dependencies are missing from the host project's package.json
  * and install them automatically.
  */
 async function installMissingPeers(): Promise<void> {
@@ -47,33 +48,56 @@ async function installMissingPeers(): Promise<void> {
   if (Object.keys(peerDeps).length === 0) return;
 
   const missing: string[] = [];
+  let hostPkg: {
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+    peerDependencies?: Record<string, string>;
+  } = {};
+
+  try {
+    const hostPkgPath = path.join(process.cwd(), 'package.json');
+    hostPkg = JSON.parse(await fs.readFile(hostPkgPath, 'utf8'));
+  } catch {
+    // If no package.json, we assume everything is missing
+  }
+
+  const allHostDeps = {
+    ...(hostPkg.dependencies || {}),
+    ...(hostPkg.devDependencies || {}),
+    ...(hostPkg.peerDependencies || {}),
+  };
 
   for (const pkgName of Object.keys(peerDeps)) {
-    try {
-      // Check if the package exists in the host project's node_modules
-      const resolved = path.join(process.cwd(), 'node_modules', pkgName);
-      await fs.access(resolved);
-    } catch {
+    if (!allHostDeps[pkgName]) {
       missing.push(pkgName);
     }
   }
 
   if (missing.length === 0) {
-    logger.success('All required packages are already installed');
+    logger.success('All required packages are already in package.json');
     return;
   }
 
   logger.info(`Installing ${missing.length} missing package(s): ${missing.join(', ')}`);
 
   try {
+    // Validate package names to strictly prevent any command injection
+    const isValid = missing.every(pkg => /^[a-zA-Z0-9\-_.@/]+$/.test(pkg));
+    if (!isValid) throw new Error('Invalid package names prevented installation');
+    
     const packages = missing.join(' ');
-    execSync(`npm install --save-dev ${packages}`, {
+    const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    // eslint-disable-next-line
+    execSync(`${npmCmd} install --save-dev ${packages}`, {
       cwd: process.cwd(),
-      stdio: 'inherit',
+      stdio: 'pipe',
     });
     logger.success(`Installed ${missing.length} package(s)`);
-  } catch {
+  } catch (error) {
     logger.warn('Some packages could not be installed automatically.');
+    if (error instanceof Error && 'stderr' in error && error.stderr) {
+      logger.error(error.stderr.toString());
+    }
     logger.info(`Try manually: npm install --save-dev ${missing.join(' ')}`);
   }
 }
@@ -93,13 +117,18 @@ async function ensureQuickLintInstalled(): Promise<void> {
 
   logger.info('Installing quicklint as a dev dependency...');
   try {
-    execSync('npm install --save-dev quicklint-react', {
+    const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    // eslint-disable-next-line
+    execSync(`${npmCmd} install --save-dev quicklint-react`, {
       cwd,
-      stdio: 'inherit',
+      stdio: 'pipe',
     });
     logger.success('Installed quicklint');
-  } catch {
+  } catch (error) {
     logger.warn('Could not install quicklint-react automatically.');
+    if (error instanceof Error && 'stderr' in error && error.stderr) {
+      logger.error(error.stderr.toString());
+    }
     logger.info('Try manually: npm install --save-dev quicklint-react');
   }
 }
@@ -145,9 +174,10 @@ export async function initCommand(): Promise<void> {
   // 3. Load the config (defaults + user overrides)
   const config = await loadConfig(cwd);
 
-  // 4. Set up Husky hooks
-  await withSpinner('Setting up git hooks (Husky)', async () => {
+  // 4. Set up Husky hooks and lint-staged
+  await withSpinner('Setting up git hooks and lint tools', async () => {
     await setupHusky(config);
+    await setupLintStaged(config);
   });
 
   // 5. Generate IDE config files
@@ -176,6 +206,9 @@ export async function initCommand(): Promise<void> {
   logger.blank();
   logger.info(chalk.yellow('  ⚠️  Please RELOAD your IDE window for ESLint to pick up the new packages.'));
   logger.blank();
+  logger.info(chalk.magenta('  🔄  Remember: If you change Prettier, Husky, or IDE settings in quicklint.config.js,'));
+  logger.info(chalk.magenta('      you MUST run `npx quicklint init` again to synchronize them!'));
+  logger.blank();
 
   logger.info('Customize by editing quicklint.config.js');
   logger.blank();
@@ -184,6 +217,9 @@ export async function initCommand(): Promise<void> {
 function getInlineTemplate(): string {
   return `// quicklint Configuration
 // Docs: https://github.com/user/quicklint#configuration
+// 
+// ⚠️ NOTE: If you change Prettier, Husky, or IDE Configs, you MUST run
+// \`npx quicklint init\` again for the changes to take effect in your project.
 
 /** @type {import('quicklint-react').QuickLintConfig} */
 export default {
@@ -221,7 +257,7 @@ export default {
   husky: {
     enabled: true,
     hooks: {
-      'pre-commit': 'npx quicklint lint --staged',
+      'pre-commit': 'npx lint-staged',
       'commit-msg': 'npx quicklint commitlint --edit "$1"',
     },
   },
