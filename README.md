@@ -26,6 +26,7 @@ That's it. Your project now has:
 - ✅ JSX accessibility checks (alt text, ARIA roles, etc.)
 - ✅ Prettier with opinionated defaults + format-on-save
 - ✅ Husky git hooks (pre-commit lint, commit message validation)
+- ✅ Lint-Staged for blazingly fast pre-commit hooks
 - ✅ Commitlint with conventional commits
 - ✅ SonarQube-style analysis with HTML report generation
 - ✅ IDE integration (VS Code, IntelliJ, WebStorm) — linting works in real-time
@@ -121,8 +122,17 @@ export default {
   husky: {
     enabled: true,
     hooks: {
-      "pre-commit": "npx quicklint lint --staged",
+      "pre-commit": "npx lint-staged",
       "commit-msg": 'npx quicklint commitlint --edit "$1"',
+    },
+  },
+
+  lintStaged: {
+    enabled: true,
+    concurrent: true,
+    config: {
+      "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+      "*.{json,md,html,yml,yaml}": ["prettier --write"],
     },
   },
 
@@ -133,6 +143,10 @@ export default {
 ```
 
 Only specify what you want to override — everything else uses production-ready defaults.
+
+> ⚠️ **After changing Prettier, Husky, or IDE settings** in `quicklint.config.js`, you **must** run `npx quicklint init` again to synchronize the generated config files with your project.
+
+> 💡 **After changing ESLint or SonarQube rules**, restart the ESLint server in your IDE (`Ctrl+Shift+P` → "ESLint: Restart ESLint Server") for the changes to take effect.
 
 ---
 
@@ -239,6 +253,7 @@ const sonarResult = await runSonarAnalysis(config);
 | ESLint                    | ^9.20   | JavaScript/TypeScript linting |
 | Prettier                  | ^3.5    | Code formatting               |
 | Husky                     | ^9.1    | Git hooks                     |
+| Lint-Staged               | ^15.2   | Fast pre-commit formatting    |
 | Commitlint                | ^19.6   | Commit message validation     |
 | eslint-plugin-sonarjs     | ^3.0    | SonarQube rules (200+)        |
 | eslint-plugin-react       | ^7.37   | React-specific rules          |
