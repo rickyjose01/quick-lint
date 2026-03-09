@@ -1,2 +1,10 @@
 node_modules
 dist
+reports/
+*.tgz
+.env
+
+# quicklint generated
+# Uncomment below to gitignore the generated IDE config file.
+# It is safe to commit if you want consistent IDE behavior across the team.
+# eslint.config.mjs
